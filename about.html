@@ -389,10 +389,14 @@ html.ask-lock{overflow:hidden}
       viewport.style.height = '';
       return;
     }
-    var k = Math.min(1, avail / 1440);
+    var k = avail / 1440;                        // 宽屏等比放大（16 寸 1728 → 1.2），不再右边留空
+    if(k > 1.5) k = 1.5;                             // 2160 以上封顶，避免字号放到失控
     docEl.style.setProperty('--k', k);
     var screen = document.querySelector('.screen');
     if(screen) stage.style.height = screen.offsetHeight + 'px';
+    // 封顶后多出来的宽度左右均分；未封顶时 pad=0，正好铺满
+    var pad = Math.max(0, (avail - 1440 * k) / 2);
+    stage.style.transform = (pad > 0.5 ? 'translateX(' + pad + 'px) ' : '') + 'scale(' + k + ')';
     viewport.style.height = (stage.offsetHeight * k) + 'px';
   }
   window.addEventListener('resize', fit);

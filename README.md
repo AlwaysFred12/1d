@@ -2,7 +2,7 @@
 
 > One day, starts now.
 
-个人资源小站。四个板块：**1D Tool**（现成能用的网页工具）、**资讯 News**（还没上线的清单）、**Personal App**（自己设计开发的 iPhone App）、**教程合集**（写过的 Mac 教程，第一篇是 **CodeX 使用教程**）。
+个人资源小站。四个板块：**1D Tool**（现成能用的网页工具）、**资讯 News**（还没上线的清单）、**Personal App**（自己设计开发的 iPhone App）、**教程合集**（写过的 Mac 教程，第一篇 **CodeX 使用教程** 已直接并进主站，不再另开一个网址）。
 
 整站是纯静态、零依赖的单文件 HTML —— 没有构建步骤、没有前端框架、没有任何外部资源请求，克隆下来直接就能跑。
 
@@ -13,13 +13,14 @@
 | | 地址 |
 | --- | --- |
 | 主站（国内） | https://1d-tools.app.workbuddy.host/ |
-| CodeX 教程 | https://1d-tools.app.workbuddy.host/codex/ |
+| 教程 01（主站内） | https://1d-tools.app.workbuddy.host/#tutorial-codex |
+| 教程 01（独立版，老链接） | https://1d-tools.app.workbuddy.host/codex/ |
 | GitHub Pages | https://alwaysfred12.github.io/1d/ |
 
 站点自带设备分流：窄屏（< 700px）自动加载手机版，宽屏加载桌面版。也可以强制指定：
 
 - `?mobile` / `?desktop` —— 强制切换版本
-- `#home` / `#tools` / `#news` / `#apps` / `#tutorial` —— 直接落到某个板块
+- `#home` / `#tools` / `#news` / `#apps` / `#tutorial` / `#tutorial-codex` —— 直接落到某个板块或某篇教程
 
 ---
 
@@ -28,12 +29,12 @@
 ```
 .
 ├── index.html            # 入口分流页（窄屏 → mobile.html，否则 → desktop.html；hash 原样透传）
-├── desktop.html          # 主站桌面版（1440 画布，五个整屏横向排开）
+├── desktop.html          # 主站桌面版（1440 画布，六个整屏横向排开：首页 / 工具 / 资讯 / App / 教程合集 / 教程 01）
 ├── mobile.html           # 主站手机版（真机重排，不是缩放的桌面版）
 ├── about.html            # 关于 1D
 ├── legal.html            # 版权声明与免责声明
 ├── tutorial-codex.html   # 旧地址跳转存根（/tutorial-codex.html → /codex/）
-├── codex/
+├── codex/                # CodeX 教程的独立版（主站已内置同一篇，这里保留给老链接与单页分享）
 │   ├── index.html        # CodeX 教程分流页
 │   ├── desktop.html      # CodeX 教程 · 桌面版
 │   └── mobile.html       # CodeX 教程 · 手机版
@@ -72,8 +73,8 @@ python3 -m http.server 8000
 ## 技术说明
 
 - **单文件自包含**：样式、脚本、图标、字体全部内联，`src` / `<link href>` / `@import` 对外的请求数为 **0**。断网也能完整显示。
-- **字体自托管**：中文用子集化后的 woff2 以 base64 内联（全站 23 条 `@font-face`），不依赖 Google Fonts 之类的境外 CDN。
-- **无横向滚动**：桌面版用 `transform: scale()` 按视口等比缩放固定 1440 画布。
+- **字体自托管**：中文用子集化后的 woff2 以 base64 内联（并入教程后 desktop / mobile 各 **39 条** `@font-face`，about / legal 各 23 条），不依赖 Google Fonts 之类的境外 CDN。
+- **无横向滚动**：桌面版用 `transform: scale()` 按视口等比缩放固定 1440 画布 —— 窄屏缩小，宽屏放大（上限 1.5，约 2160px 宽；再宽的屏封顶后左右均分留白居中），不会出现内容贴左、右侧空一条的问题。
 - **手机版是独立排版**，不是桌面版的缩放。
 - 没有 `package.json`、没有 node_modules、没有构建产物 —— 改完 HTML 存盘即生效。
 
