@@ -664,7 +664,7 @@ a.quark__v:hover{color:#fff}
               <span class="like__fx" data-fx></span>
             </button>
             <span class="like__cap">点个赞吧～</span>
-            <span class="like__n">已有 <b data-like-n>0</b> 次点赞</span>
+            <span class="like__n">已有 <b data-like-n>—</b> 次点赞</span>
           </div>
         </div>
       </div>
@@ -735,6 +735,39 @@ a.quark__v:hover{color:#fff}
   paintProg(); sweep();
   if(document.fonts && document.fonts.ready) document.fonts.ready.then(sweep);
   // 点赞：连点连冒
+  var LIKE_KEY = '1d-like-codex';
+  var LIKE_API = 'https://countapi.mileshilliard.com/api/v1/';
+  var likeN = document.querySelector('[data-like-n]');
+  var likeShown = -1, likeTouched = false;
+  function likePaint(v){
+    if(!likeN || typeof v !== 'number' || !isFinite(v)) return;
+    likeShown = v;
+    likeN.textContent = v;
+    try{ localStorage.setItem('1d-like-' + LIKE_KEY, String(v)); }catch(e){}
+  }
+  function likeLoad(){
+    try{
+      var c = localStorage.getItem('1d-like-' + LIKE_KEY);
+      if(c !== null && c !== '') likePaint(parseInt(c, 10));
+    }catch(e){}
+    if(!window.fetch) return;
+    fetch(LIKE_API + 'get/' + LIKE_KEY, {cache:'no-store'})
+      .then(function(r){ return r.status === 404 ? {value:0} : (r.ok ? r.json() : null); })
+      .catch(function(){ return null; })
+      .then(function(d){ if(!likeTouched && d && typeof d.value === 'number') likePaint(d.value); });
+  }
+  function likeHit(){
+    likeTouched = true;
+    if(!window.fetch){ if(likeShown >= 0) likePaint(likeShown + 1); return; }
+    fetch(LIKE_API + 'hit/' + LIKE_KEY, {cache:'no-store'})
+      .then(function(r){ return r.ok ? r.json() : null; })
+      .catch(function(){ return null; })
+      .then(function(d){
+        if(d && typeof d.value === 'number'){ if(d.value > likeShown) likePaint(d.value); }
+        else if(likeShown >= 0){ likePaint(likeShown + 1); }   // 接口失败：至少让本机看到 +1
+      });
+  }
+  likeLoad();
   var FX = ['\u2764\uFE0F','\uD83D\uDC96','\uD83D\uDC95','\uD83E\uDD70','\u2728','\uD83D\uDC97','\uD83E\uDDB6','\uD83C\uDF1F'];
   document.addEventListener('click', function(e){
     var btn = e.target && e.target.closest ? e.target.closest('[data-like]') : null;
@@ -752,8 +785,7 @@ a.quark__v:hover{color:#fff}
       if(fx) fx.appendChild(sp);
       (function(el){ setTimeout(function(){ if(el.parentNode) el.parentNode.removeChild(el); }, 1500); })(sp);
     }
-    var n = document.querySelector('[data-like-n]');
-    if(n){ var cur = parseInt(n.textContent, 10); n.textContent = (isNaN(cur) ? 0 : cur) + 1; }
+    likeHit();
     btn.classList.add('is-on');
     setTimeout(function(){ btn.classList.remove('is-on'); }, 300);
   });

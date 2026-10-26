@@ -2,7 +2,7 @@
 
 > One day, starts now.
 
-个人资源小站。三个板块：**1D Tool**（现成能用的网页工具）、**资讯 News**（还没上线的清单）、**Personal App**（自己设计开发的 iPhone App）。另有一篇独立的 **CodeX 使用教程**。
+个人资源小站。四个板块：**1D Tool**（现成能用的网页工具）、**资讯 News**（还没上线的清单）、**Personal App**（自己设计开发的 iPhone App）、**教程合集**（写过的 Mac 教程，第一篇是 **CodeX 使用教程**）。
 
 整站是纯静态、零依赖的单文件 HTML —— 没有构建步骤、没有前端框架、没有任何外部资源请求，克隆下来直接就能跑。
 
@@ -19,7 +19,7 @@
 站点自带设备分流：窄屏（< 700px）自动加载手机版，宽屏加载桌面版。也可以强制指定：
 
 - `?mobile` / `?desktop` —— 强制切换版本
-- `#home` / `#tools` / `#news` / `#apps` —— 直接落到某个板块
+- `#home` / `#tools` / `#news` / `#apps` / `#tutorial` —— 直接落到某个板块
 
 ---
 
@@ -28,7 +28,7 @@
 ```
 .
 ├── index.html            # 入口分流页（窄屏 → mobile.html，否则 → desktop.html；hash 原样透传）
-├── desktop.html          # 主站桌面版（1440 画布，四个整屏横向排开）
+├── desktop.html          # 主站桌面版（1440 画布，五个整屏横向排开）
 ├── mobile.html           # 主站手机版（真机重排，不是缩放的桌面版）
 ├── about.html            # 关于 1D
 ├── legal.html            # 版权声明与免责声明
